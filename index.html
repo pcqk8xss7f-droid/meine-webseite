@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Schul-Chatbot</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="chatbox">
+    <div class="messages" id="chat"></div>
+
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Nachricht eingeben...">
+        <button onclick="sendMessage()">Senden</button>
+    </div>
+</div>
+
+<script>
+
+let streak = 0;
+
+const sekretariat = 
+"Ich kann dir leider gerade nicht weiterhelfen.\n" +
+"Bitte kontaktiere das Sekretariat:\n" +
+"Telefon: 012 345 67 89\n" +
+"E-Mail: sekretariat@schule.ch";
+
+function addMessage(text, sender) {
+    let chat = document.getElementById("chat");
+    let msg = document.createElement("div");
+    msg.classList.add("message", sender);
+    msg.innerText = text;
+    chat.appendChild(msg);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function sendMessage() {
+    let input = document.getElementById("userInput");
+    let text = input.value.toLowerCase().trim();
+    if (text === "") return;
+
+    addMessage(text, "user");
+    input.value = "";
+
+    let answer = "";
+
+    // Begrüßungen
+    let greetings = ["hallo", "hi", "hey"];
+    if (greetings.some(g => text.includes(g))) {
+        answer = "Hallo! Wie kann ich dir helfen?";
+        streak = 0;
+
+    // Verabschiedung
+    } else if (text.includes("tschüss") || text.includes("ciao") || text.includes("bye")) {
+        answer = "Tschüss! Viel Erfolg in der Schule.";
+        streak = 0;
+
+    // Danke
+    } else if (text.includes("danke")) {
+        answer = "Gern geschehen!";
+        streak = 0;
+
+    // Bitte
+    } else if (text.includes("bitte")) {
+        answer = "Kein Problem!";
+        streak = 0;
+
+    // Schulfragen
+    } else if (text.includes("schule")) {
+        answer = "Unsere Schule heisst Sekundarschulzentrum GSU.";
+        streak = 0;
+
+    } else if (text.includes("unterricht beginnt")) {
+        answer = "Der Unterricht beginnt um 7:20 oder um 8:10 Uhr.";
+        streak = 0;
+
+    } else if (text.includes("unterricht endet")) {
+        answer = "Der Unterricht endet um 15:05, 16:05 oder 17:05 Uhr.";
+        streak = 0;
+
+    } else if (text.includes("schulleiter")) {
+        answer = "Der Schulleiter ist Herr Flückiger.";
+        streak = 0;
+
+    } else if (text.includes("wlan")) {
+        answer = "Ja, es gibt WLAN.";
+        streak = 0;
+
+    } else if (text.includes("wie viele klassen")) {
+        answer = "Es gibt insgesamt 9 Klassen.";
+        streak = 0;
+
+    } else if (text.includes("handy")) {
+        answer = "Handys sind grundsätzlich nicht erlaubt, ausser eine Lehrperson erlaubt es.";
+        streak = 0;
+
+    } else if (text.includes("stundenplan")) {
+        answer = "Den Stundenplan findest du auf der Schulwebseite: gsu-so.ch.";
+        streak = 0;
+
+    } else if (text.includes("pausen")) {
+        answer = "Es gibt alle 45 Minuten eine 5-Minuten-Pause und um 9:45 sowie 15:05 eine längere Pause von 15 Minuten.";
+        streak = 0;
+
+    } else if (text.includes("hausaufgaben")) {
+        answer = "Ja es gibt Hausaufgaben.";
+        streak = 0;
+
+    // Standardantwort
+    } else {
+        streak++;
+
+        if (streak >= 3) {
+            answer = sekretariat;
+            streak = 0;
+        } else {
+            answer = "Das weiss ich leider noch nicht. Frag mich gern etwas anderes.";
+        }
+    }
+
+    // Bot schreibt...
+    setTimeout(() => {
+        addMessage("...", "bot");
+
+        setTimeout(() => {
+            let bots = document.querySelectorAll(".bot");
+            bots[bots.length - 1].innerText = answer;
+        }, 600);
+
+    }, 300);
+}
+
+// Enter-Taste
+document.getElementById("userInput")
+    .addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+            sendMessage();
+        }
+    });
+
+// Startnachricht
+window.onload = function () {
+    addMessage(
+        "Hallo! Ich bin der Schul-Chatbot. Ich kann Fragen zur Schule beantworten.",
+        "bot"
+    );
+};
+
+</script>
+
+</body>
+</html>
